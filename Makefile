@@ -2,12 +2,15 @@ OBJECTS =
 
 DEPENDENCIES =
 
-build:
+build: clean
+	nasm -f bin ./src/boot.asm -o ./bin/boot.bin
 
 run:
+	qemu-system-i386 -hda ./bin/boot.bin
 
 debug:
 
 test:
 
-clear:
+clean:
+	rm -rf ./bin/boot.bin
