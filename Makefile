@@ -1,4 +1,4 @@
-OBJECTS = 
+OBJECTS =
 
 DEPENDENCIES =
 
@@ -14,3 +14,4 @@ test:
 
 clean:
 	rm -rf ./bin/boot.bin
+	rm -rf $(OBJECTS)
