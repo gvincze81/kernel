@@ -24,9 +24,20 @@ setup:
 
 ; GDT
 
+gdt_start:
 gdt_null:
     dd 0x00
     dd 0x00
+
+; Code segment descriptor
+gdt_code:
+    dw 0xFFFF ; Segment limit 15-0
+    dw 0x00 ; Segment base 15-0
+    db 0x00 ; Segment base 23-16
+    db 0x9A ; Present bit: 1, DPL = 0, S bit: user segment(1),
+            ;Type field: code segment(1), non-conforming(0), readable(1), not accessed(0)
+    db 0b1100111 ; Granularity = 1, Default size = 1, L = 0, AVL = 0, Limit 19-16
+    db 0x00 ; Base 31-24
 
 ; End
 
