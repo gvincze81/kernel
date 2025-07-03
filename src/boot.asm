@@ -1,6 +1,11 @@
 ORG 0x7C00
 BITS 16
 
+CODE_SEG equ gdt_code - gdt_start
+DATA_SEG equ gdt_data - gdt_start
+
+%define PROTECTION_ENABLE 1o
+
 _start:
     jmp short start
     nop
@@ -20,7 +25,14 @@ setup:
     mov sp, 0x7C00
     sti
 
-    jmp $
+.load_protected:
+    cli
+    lgdt[gdt_descriptor]
+    mov eax, cr0
+    or eax, PROTECTION_ENABLE
+    mov cr0, eax
+    ; Processor is in protected mode from this point
+    jmp CODE_SEG:load_32 ; File offset 0x67
 
 ; GDT
 
@@ -54,6 +66,20 @@ gdt_descriptor:
     dd gdt_start
 
 ; End
+
+BITS 32
+
+load_32:
+    mov eax, DATA_SEG
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    mov ebp, 0x00200000
+    mov esp, ebp
+
+    jmp $
 
 times 510 - ($ - $$) db 0
 
