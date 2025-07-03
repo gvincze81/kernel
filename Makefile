@@ -11,6 +11,7 @@ run:
 	qemu-system-i386 -hda ./bin/boot.bin
 
 debug:
+	gdb -q
 
 test:
 
