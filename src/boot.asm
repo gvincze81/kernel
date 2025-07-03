@@ -20,14 +20,15 @@ setup:
     mov sp, 0x7C00
     sti
 
-; main code
-    mov ah, 0x0e
-    mov al, 'X'
-    mov bx, 0
-    int 0x10
-; end
-
     jmp $
+
+; GDT
+
+gdt_null:
+    dd 0x00
+    dd 0x00
+
+; End
 
 times 510 - ($ - $$) db 0
 
