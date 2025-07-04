@@ -2,13 +2,13 @@ OBJECTS =
 
 DEPENDENCIES =
 
+BOOTLOADER_BINARY = ./bin/boot.bin
+
 build: clean
-	nasm -f bin ./src/boot.asm -o ./bin/boot.bin
-	dd if=./message.txt >> ./bin/boot.bin
-	dd if=/dev/zero bs=512 count=1 >> ./bin/boot.bin
+	nasm -f bin ./src/boot/boot.asm -o $(BOOTLOADER_BINARY)
 
 run:
-	qemu-system-i386 -hda ./bin/boot.bin
+	qemu-system-i386 -hda $(BOOTLOADER_BINARY)
 
 debug:
 	gdb -q
@@ -16,5 +16,5 @@ debug:
 test:
 
 clean:
-	rm -rf ./bin/boot.bin
+	rm -rf $(BOOTLOADER_BINARY)
 	rm -rf $(OBJECTS)
