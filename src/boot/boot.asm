@@ -32,8 +32,7 @@ setup:
     or eax, PROTECTION_ENABLE
     mov cr0, eax
     ; Processor is in protected mode from this point
-    ; jmp CODE_SEG:load_32 ; File offset 0x67
-    jmp $
+    jmp CODE_SEG:load_32 ; File offset 0x67
 
 ; GDT
 
@@ -66,6 +65,10 @@ gdt_descriptor:
     dw gdt_end - 1 - gdt_start
     dd gdt_start
 
+[BITS 32]
+
+load_32:
+    jmp $
 ; End
 
 times 510 - ($ - $$) db 0
