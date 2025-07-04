@@ -1,6 +1,11 @@
 BITS 32
 
-load_32:
+global _start
+
+%define CODE_SEG 0x08
+%define DATA_SEG 0x10
+
+_start:
     mov eax, DATA_SEG
     mov ds, ax
     mov es, ax
