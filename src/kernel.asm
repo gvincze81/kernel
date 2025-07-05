@@ -2,6 +2,8 @@ BITS 32
 
 global _start
 
+extern kernel_main
+
 %define CODE_SEG 0x08
 %define DATA_SEG 0x10
 
@@ -21,4 +23,8 @@ _start:
     out 0x92, al
     ; End
 
+    call kernel_main
+
     jmp $
+
+times 512-($ - $$) db 0

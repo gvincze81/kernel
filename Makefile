@@ -1,10 +1,14 @@
-OBJECTS = ./build/kernel.asm.o
+OBJECTS = ./build/kernel.asm.o ./build/kernel.o
 
-DEPENDENCIES = kernel.asm
+DEPENDENCIES = kernel.asm kernel.c
 
 BOOTLOADER_BINARY = ./bin/boot.bin
 
-FLAGS = -ffreestanding -O0 -nostdlib
+INCLUDES = -I./src
+
+FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer \
+	-finline-functions -Wno-unused-function -Wno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib \
+	-nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
 build: clean boot kernel
 	dd if=./bin/boot.bin >> ./bin/os.bin
@@ -17,11 +21,14 @@ boot:
 # The Linker sticks all the OBJECTS together 
 kernel: $(DEPENDENCIES)
 	i686-elf-ld -g -relocatable $(OBJECTS) -o ./build/kernelfull.o
-	i686-elf-gcc -T ./linker.ld -o ./bin/kernel.bin $(FLAGS) ./build/kernelfull.o
+	i686-elf-gcc $(FLAGS) -T ./linker.ld -o ./bin/kernel.bin ./build/kernelfull.o
 
 # OBJECT FILES
 kernel.asm:
 	nasm -f elf -g ./src/kernel.asm -o ./build/kernel.asm.o
+
+kernel.c:
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/kernel.c -o ./build/kernel.o
 # END
 
 run:
@@ -34,5 +41,7 @@ test:
 
 clean:
 	rm -rf $(BOOTLOADER_BINARY)
+	rm -rf ./bin/kernel.bin
 	rm -rf ./bin/os.bin
 	rm -rf $(OBJECTS)
+	rm -rf ./build/kernelfull.o
