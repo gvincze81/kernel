@@ -1,24 +1,18 @@
-ORG 0x7C00
+ORG 0x7c00
 BITS 16
 
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
 
-%define PROTECTION_ENABLE 1o
-%define KERNEL_EFFECTIVE_ADDRESS 0x100000
-
 jmp short start
 nop
 
-; BIOS PARAMETER BLOCK
-times 30 db 0
-
 start:
-    jmp 0x00:setup
+    jmp 0:step2
 
-setup:
-    cli
-    mov ax, 0
+step2:
+    cli ; Clear Interrupts
+    mov ax, 0x00
     mov ds, ax
     mov es, ax
     mov ss, ax
@@ -31,13 +25,11 @@ setup:
     cli
     lgdt[gdt_descriptor]
     mov eax, cr0
-    or eax, PROTECTION_ENABLE
+    or eax, 0x1
     mov cr0, eax
-    ; Processor is in protected mode from this point
-    jmp CODE_SEG:load_32
-
+    jmp CODE_SEG:load32
+    
 ; GDT
-
 gdt_start:
 gdt_null:
     dd 0x00
@@ -64,55 +56,68 @@ gdt_data:
 gdt_end:
 
 gdt_descriptor:
-    dw gdt_end - 1 - gdt_start
+    dw gdt_end - gdt_start-1
     dd gdt_start
+ 
+ [BITS 32]
+ load32:
+    mov ax, DATA_SEG
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
 
-[BITS 32]
+    ; Enable the A20 line
+    in al, 0x92
+    or al, 2
+    out 0x92, al
 
-; Load kernel to memory
-load_32:
+    ; For the loading...
     mov eax, 1
     mov ecx, 100
-    mov edi, 0x100000
+    mov edi, 0x0100000
+
+
     call ata_lba_read
-    jmp CODE_SEG:KERNEL_EFFECTIVE_ADDRESS
+    jmp CODE_SEG:0x0100000
 
 ata_lba_read:
-    mov ebx, eax ; Backup the LBA
-    ; Send highest 8 bits to hard disk controller
+    mov ebx, eax, ; Backup the LBA
+    ; Send the highest 8 bits of the lba to hard disk controller
     shr eax, 24
-    or eax, 0xE0 ; Selects the master drive
-    mov dx, 0x01F6
+    or eax, 0xE0 ; Select the  master drive
+    mov dx, 0x1F6
     out dx, al
-    ; Finished sending highest 8 bits
+    ; Finished sending the highest 8 bits of the lba
 
-    ; Send number of total sectors
+    ; Send the total sectors to read
     mov eax, ecx
-    mov dx, 0x01F2
+    mov dx, 0x1F2
     out dx, al
-    ; End
+    ; Finished sending the total sectors to read
 
-    ; Send bottom 8 bits
-    mov eax, ebx ; Restore original value of LBA
-    mov dx, 0x01F3
+    ; Send more bits of the LBA
+    mov eax, ebx ; Restore the backup LBA
+    mov dx, 0x1F3
     out dx, al
-    ; End
+    ; Finished sending more bits of the LBA
 
-    ; Send more bits
-    mov dx, 0x01F4
-    mov eax, ebx
+    ; Send more bits of the LBA
+    mov dx, 0x1F4
+    mov eax, ebx ; Restore the backup LBA
     shr eax, 8
     out dx, al
-    ; End
+    ; Finished sending more bits of the LBA
 
-    ; Send 8 bits at index 2(third from bottom)
-    mov dx, 0x01F5
-    mov eax, ebx
+    ; Send upper 16 bits of the LBA
+    mov dx, 0x1F5
+    mov eax, ebx ; Restore the backup LBA
     shr eax, 16
     out dx, al
-    ; End
+    ; Finished sending upper 16 bits of the LBA
 
-    mov dx, 0x01F7
+    mov dx, 0x1f7
     mov al, 0x20
     out dx, al
 
@@ -120,24 +125,22 @@ ata_lba_read:
 .next_sector:
     push ecx
 
-%define TEST_BIT 8
+%define TEST_RESULT 0x08
 ; Checking if we need to read
 .try_again:
-
-    mov dx, 0x01F7
+    mov dx, 0x1f7
     in al, dx
-    test al, TEST_BIT
-    je .try_again
+    test al, TEST_RESULT
+    jz .try_again
 
-; We need to read 256 sectors at a time
+; We need to read 256 words at a time
     mov ecx, 256
-    mov dx, 0x01F0
+    mov dx, 0x1F0
     rep insw
     pop ecx
     loop .next_sector
-    ; Finished reading all sectors
+    ; End of reading sectors into memory
     ret
 
-times 510 - ($ - $$) db 0
-
+times 510-($ - $$) db 0
 dw 0xAA55
