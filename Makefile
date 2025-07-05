@@ -34,5 +34,7 @@ test:
 
 clean:
 	rm -rf $(BOOTLOADER_BINARY)
+	rm -rf ./bin/kernel.bin
 	rm -rf ./bin/os.bin
 	rm -rf $(OBJECTS)
+	rm -rf ./build/kernelfull.o
