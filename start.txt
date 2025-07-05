@@ -1,3 +1,4 @@
 set disassembly-flavor intel
-target remote | qemu-system-i386 -hda ./bin/boot.bin -S -gdb stdio
-break *0x7C00
+add-symbol-file ./build/kernelfull.o 0x100000
+break _start
+target remote | qemu-system-i386 -hda ./bin/os.bin -S -gdb stdio
