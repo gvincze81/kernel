@@ -22,3 +22,5 @@ _start:
     ; End
 
     jmp $
+
+times 512-($ - $$) db 0
