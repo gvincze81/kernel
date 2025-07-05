@@ -22,6 +22,8 @@ setup:
     mov ds, ax
     mov es, ax
     mov ss, ax
+    mov fs, ax
+    mov gs, ax
     mov sp, 0x7C00
     sti
 
@@ -48,7 +50,7 @@ gdt_code:
     db 0x00 ; Segment base 23-16
     db 0x9A ; Present bit: 1, DPL = 0, S bit: user segment(1),
             ;Type field: code segment(1), non-conforming(0), readable(1), not accessed(0)
-    db 0b1100111 ; Granularity = 1, Default size = 1, L = 0, AVL = 0, Limit 19-16
+    db 0b11001111 ; Granularity = 1, Default size = 1, L = 0, AVL = 0, Limit 19-16
     db 0x00 ; Base 31-24
 
 gdt_data:
@@ -57,7 +59,7 @@ gdt_data:
     db 0x00 ; Segment base 23-16
     db 0x92 ; Present bit: 1, DPL = 0, S bit: user segment(1),
             ;Type field: code segment(1), non-conforming(0), readable(1), not accessed(0)
-    db 0b1100111 ; Granularity = 1, Default size = 1, L = 0, AVL = 0, Limit 19-16
+    db 0b11001111 ; Granularity = 1, Default size = 1, L = 0, AVL = 0, Limit 19-16
     db 0x00 ; Base 31-24
 gdt_end:
 
