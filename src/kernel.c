@@ -1,5 +1,8 @@
 #include "kernel.h"
 
+#include <stdint.h>
+#include <stddef.h>
+
 uint16_t *video_mem = 0;
 
 uint16_t terminal_make_char(char ch, char color)
@@ -18,6 +21,18 @@ void terminal_initialize()
             video_mem[i * VGA_WIDTH + j] = terminal_make_char(SPACE_CHARACTER, 0);
         }
     }
+}
+
+size_t strlen(const char *str)
+{
+    size_t len = 0;
+
+    while(str[len])
+    {
+        len++;
+    }
+
+    return len;
 }
 
 void kernel_main()
