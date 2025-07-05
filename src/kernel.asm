@@ -2,6 +2,8 @@ BITS 32
 
 global _start
 
+extern kernel_main
+
 %define CODE_SEG 0x08
 %define DATA_SEG 0x10
 
@@ -20,6 +22,8 @@ _start:
     or al, 2
     out 0x92, al
     ; End
+
+    call kernel_main
 
     jmp $
 
