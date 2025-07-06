@@ -1,6 +1,6 @@
-OBJECTS = ./build/kernel.asm.o ./build/kernel.o
+OBJECTS = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.o
 
-DEPENDENCIES = kernel.asm kernel.c
+DEPENDENCIES = kernel.asm kernel.c idt
 
 INCLUDES = -I./src
 
@@ -27,6 +27,9 @@ kernel.asm:
 
 kernel.c:
 	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/kernel.c -o ./build/kernel.o
+
+idt:
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/idt/idt.c -o ./build/idt/idt.o
 # END
 
 run:
