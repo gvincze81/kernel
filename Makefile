@@ -2,8 +2,6 @@ OBJECTS = ./build/kernel.asm.o ./build/kernel.o
 
 DEPENDENCIES = kernel.asm kernel.c
 
-BOOTLOADER_BINARY = ./bin/boot.bin
-
 INCLUDES = -I./src
 
 FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer \
@@ -16,7 +14,7 @@ build: clean boot kernel
 	dd if=/dev/zero bs=512 count=100 >> ./bin/os.bin 
 
 boot:
-	nasm -f bin ./src/boot/boot.asm -o $(BOOTLOADER_BINARY)
+	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
 
 # The Linker sticks all the OBJECTS together 
 kernel: $(DEPENDENCIES)
@@ -32,7 +30,7 @@ kernel.c:
 # END
 
 run:
-	qemu-system-i386 -hda $(BOOTLOADER_BINARY)
+	qemu-system-i386 -hda ./bin/os.bin
 
 debug:
 	gdb -q
@@ -40,7 +38,7 @@ debug:
 test:
 
 clean:
-	rm -rf $(BOOTLOADER_BINARY)
+	rm -rf ./bin/boot.bin
 	rm -rf ./bin/kernel.bin
 	rm -rf ./bin/os.bin
 	rm -rf $(OBJECTS)
