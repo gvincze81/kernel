@@ -19,9 +19,16 @@ void terminal_putchar(uint32_t row, uint32_t col, char ch, char color)
 
 void terminal_writechar(char ch, char color)
 {
-    terminal_putchar(terminal_row, terminal_col, ch, color);
+    if(ch == '\n')
+    {
+        terminal_col = 0;
+        terminal_row += 1;
+        return;
+    }
 
+    terminal_putchar(terminal_row, terminal_col, ch, color);
     terminal_col += 1;
+
     if(terminal_col >= VGA_WIDTH)
     {
         terminal_col = 0;
@@ -52,6 +59,16 @@ size_t strlen(const char *str)
     }
 
     return len;
+}
+
+void print(const char *str)
+{
+    size_t len = strlen(str);
+
+    for (size_t i = 0; i < len; i++)
+    {
+        terminal_writechar(str[i], 15);
+    }
 }
 
 void kernel_main()
