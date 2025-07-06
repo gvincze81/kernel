@@ -52,8 +52,4 @@ debug:
 test:
 
 clean:
-	rm -rf ./bin/boot.bin
-	rm -rf ./bin/kernel.bin
-	rm -rf ./bin/os.bin
-	rm -rf $(OBJECTS)
-	rm -rf ./build/kernelfull.o
+	rm -rf ./bin/boot.bin ./bin/kernel.bin ./bin/os.bin $(OBJECTS) ./build/kernelfull.o
