@@ -10,6 +10,11 @@ uint16_t terminal_make_char(char ch, char color)
     return (color << 8) | ch;
 }
 
+void terminal_putchar(uint32_t row, uint32_t col, char ch, char color)
+{
+    video_mem[row * VGA_WIDTH + col] = terminal_make_char(ch, color);
+}
+
 void terminal_initialize()
 {
     video_mem = (uint16_t*)(VIDEO_MEM);
@@ -18,7 +23,7 @@ void terminal_initialize()
     {
         for(int j = 0; j < VGA_WIDTH; j++)
         {
-            video_mem[i * VGA_WIDTH + j] = terminal_make_char(SPACE_CHARACTER, 0);
+            terminal_putchar(i, j, ' ', 0);
         }
     }
 }
@@ -38,4 +43,5 @@ size_t strlen(const char *str)
 void kernel_main()
 {
     terminal_initialize();
+    terminal_putchar(0, 0, 'X', 4);
 }
