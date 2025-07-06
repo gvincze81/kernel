@@ -4,6 +4,8 @@
 #include <stddef.h>
 
 uint16_t *video_mem = 0;
+uint16_t terminal_row = 0;
+uint16_t terminal_col = 0;
 
 uint16_t terminal_make_char(char ch, char color)
 {
@@ -13,6 +15,18 @@ uint16_t terminal_make_char(char ch, char color)
 void terminal_putchar(uint32_t row, uint32_t col, char ch, char color)
 {
     video_mem[row * VGA_WIDTH + col] = terminal_make_char(ch, color);
+}
+
+void terminal_writechar(char ch, char color)
+{
+    terminal_putchar(terminal_row, terminal_col, ch, color);
+
+    terminal_col += 1;
+    if(terminal_col >= VGA_WIDTH)
+    {
+        terminal_col = 0;
+        terminal_row += 1;
+    }
 }
 
 void terminal_initialize()
@@ -43,5 +57,4 @@ size_t strlen(const char *str)
 void kernel_main()
 {
     terminal_initialize();
-    terminal_putchar(0, 0, 'X', 4);
 }
