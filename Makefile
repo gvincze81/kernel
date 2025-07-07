@@ -10,8 +10,6 @@ FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign
 
 .PHONY = clean
 
-all: ./bin/os.bin
-
 ./bin/os.bin: ./bin/boot.bin ./bin/kernel.bin
 	rm -rf ./bin/os.bin
 	dd if=./bin/boot.bin >> ./bin/os.bin
