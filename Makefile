@@ -1,6 +1,7 @@
-OBJECTS = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.o ./build/memory/memory.o ./build/idt/idt.asm.o
+OBJECTS = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.o ./build/memory/memory.o ./build/idt/idt.asm.o \
+	./build/io/io.asm.o
 
-HEADERS = ./src/config.h ./src/kernel.h ./src/idt/idt.h ./src/memory/memory.h
+HEADERS = ./src/config.h ./src/kernel.h ./src/idt/idt.h ./src/memory/memory.h ./src/io/io.h
 
 INCLUDES = -I./src
 
@@ -41,6 +42,9 @@ FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign
 
 ./build/memory/memory.o: ./src/memory/memory.c
 	i686-elf-gcc $(INCLUDES) -I./src/memory $(FLAGS) -std=gnu99 -c ./src/memory/memory.c -o ./build/memory/memory.o
+
+./build/io/io.asm.o: ./src/io/io.asm
+	nasm -f elf -g ./src/io/io.asm -o ./build/io/io.asm.o
 
 # END
 
