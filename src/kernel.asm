@@ -23,6 +23,19 @@ _start:
     out 0x92, al
     ; End
 
+    ; Remap the master PIC
+    mov al, 0b00010001
+    out 0x20, al ; Put PIC into init mode
+
+    mov al, 0x20 ; Interupt 0x20 is where PIC should be remapped
+    out 0x21, al
+
+    mov al, 0b00000001
+    out 0x21, al
+    ; End
+
+    sti
+
     call kernel_main
 
     jmp $
