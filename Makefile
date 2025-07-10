@@ -1,7 +1,7 @@
 OBJECTS = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.o ./build/memory/memory.o ./build/idt/idt.asm.o \
-	./build/io/io.asm.o
+	./build/io/io.asm.o ./build/memory/heap/heap.o
 
-HEADERS = ./src/config.h ./src/kernel.h ./src/idt/idt.h ./src/memory/memory.h ./src/io/io.h
+HEADERS = ./src/config.h ./src/kernel.h ./src/idt/idt.h ./src/memory/memory.h ./src/io/io.h ./src/memory/heap/heap.h
 
 INCLUDES = -I./src
 
@@ -25,23 +25,26 @@ FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign
 	i686-elf-gcc $(FLAGS) -T ./linker.ld ./build/kernelfull.o -o ./bin/kernel.bin
 
 # OBJECT FILES
-./build/kernelfull.o: $(OBJECTS) $(HEADERS)
+./build/kernelfull.o: $(OBJECTS)
 	i686-elf-ld -g -relocatable $(OBJECTS) -o ./build/kernelfull.o
 
-./build/kernel.asm.o: ./src/kernel.asm 
+./build/kernel.asm.o: ./src/kernel.asm
 	nasm -f elf -g ./src/kernel.asm -o ./build/kernel.asm.o
 
-./build/kernel.o: ./src/kernel.c
+./build/kernel.o: ./src/kernel.c $(HEADERS)
 	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/kernel.c -o ./build/kernel.o
 
-./build/idt/idt.asm.o: ./src/idt/idt.asm 
+./build/idt/idt.asm.o: ./src/idt/idt.asm
 	nasm -f elf -g ./src/idt/idt.asm -o ./build/idt/idt.asm.o
 
-./build/idt/idt.o: ./src/idt/idt.c
-	i686-elf-gcc $(INCLUDES) -I./src/idt $(FLAGS) -std=gnu99 -c ./src/idt/idt.c -o ./build/idt/idt.o
+./build/idt/idt.o: ./src/idt/idt.c $(HEADERS)
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/idt/idt.c -o ./build/idt/idt.o
 
-./build/memory/memory.o: ./src/memory/memory.c
-	i686-elf-gcc $(INCLUDES) -I./src/memory $(FLAGS) -std=gnu99 -c ./src/memory/memory.c -o ./build/memory/memory.o
+./build/memory/memory.o: ./src/memory/memory.c $(HEADERS)
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/memory/memory.c -o ./build/memory/memory.o
+
+./build/memory/heap/heap.o: ./src/memory/heap/heap.c $(HEADERS)
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/memory/heap/heap.c -o ./build/memory/heap/heap.o
 
 ./build/io/io.asm.o: ./src/io/io.asm
 	nasm -f elf -g ./src/io/io.asm -o ./build/io/io.asm.o
