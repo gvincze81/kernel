@@ -1,4 +1,5 @@
 #include "heap.h"
+#include "config.h"
 #include "status.h"
 #include "memory/memory.h"
 
@@ -47,3 +48,43 @@ int heap_create(struct heap *heap, void *ptr, void *end, struct heap_table *tabl
 out:
     return res;
 }
+
+#if IMPLEMENTATION == 0
+static uint32_t heap_align_value_to_upper(uint32_t val)
+{
+    if(val % HEAP_BLOCK_SIZE == 0)
+        return val;
+
+    val = val - (val % HEAP_BLOCK_SIZE);
+    val += HEAP_BLOCK_SIZE;
+
+    return val;
+}
+#elif
+static uint32_t heap_align_value_to_upper(uint32_t val)
+{
+    if(!val)
+        return 0;
+
+    val -= 1;
+    val += HEAP_BLOCK_SIZE - ((val) % HEAP_BLOCK_SIZE);
+
+    return val;
+}
+#endif
+
+static void *heap_malloc_blocks(struct heap *heap, uint32_t total_blocks)
+{
+}
+
+void *heap_malloc(struct heap *heap, size_t size)
+{
+    size_t aligned_size = heap_align_value_to_upper(size);
+    uint32_t total_blocks = aligned_size / HEAP_BLOCK_SIZE;
+    if(total_blocks){}
+
+    return heap_malloc_blocks(heap, total_blocks);
+}
+
+void heap_free(struct heap *heap, void *ptr)
+{}

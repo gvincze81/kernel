@@ -11,4 +11,6 @@
 #define HEAP_ADDRESS 0x01000000
 #define HEAP_TABLE_ADDRESS 0x7E00
 
+#define IMPLEMENTATION 0
+
 #endif
