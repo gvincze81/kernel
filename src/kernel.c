@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include "idt/idt.h"
+#include "memory/heap/kheap.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -77,5 +78,9 @@ void kernel_main()
     terminal_initialize();
     print("alpha beta\ngamma\n");
 
+    // Initialize the HEAP
+    kheap_init();
+
+    // Initialize the IDT
     idt_init();
 }
