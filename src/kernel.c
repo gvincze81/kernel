@@ -83,4 +83,7 @@ void kernel_main()
 
     // Initialize the IDT
     idt_init();
+
+    // Enable maskable interrupts
+    enable_interrupts();
 }
