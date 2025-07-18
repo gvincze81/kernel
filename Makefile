@@ -1,8 +1,8 @@
 OBJECTS = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.o ./build/memory/memory.o ./build/idt/idt.asm.o \
-	./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o
+	./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o
 
 HEADERS = ./src/config.h ./src/kernel.h ./src/idt/idt.h ./src/memory/memory.h ./src/io/io.h ./src/memory/heap/heap.h \
-	./src/memory/heap/kheap.h
+	./src/memory/heap/kheap.h ./src/memory/paging/paging.h 
 
 INCLUDES = -I./src
 
@@ -49,6 +49,9 @@ FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign
 
 ./build/memory/heap/kheap.o: ./src/memory/heap/kheap.c $(HEADERS)
 	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/memory/heap/kheap.c -o ./build/memory/heap/kheap.o
+
+./build/memory/paging/paging.o: ./src/memory/paging/paging.c $(HEADERS)
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/memory/paging/paging.c -o ./build/memory/paging/paging.o
 
 ./build/io/io.asm.o: ./src/io/io.asm
 	nasm -f elf -g ./src/io/io.asm -o ./build/io/io.asm.o
