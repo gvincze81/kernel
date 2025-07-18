@@ -2,6 +2,7 @@
 #include "heap.h"
 #include "config.h"
 #include "kernel.h"
+#include "memory/memory.h"
 
 #include <stdint.h>
 
@@ -27,6 +28,18 @@ void kheap_init()
 void *kmalloc(size_t size)
 {
     return heap_malloc(&kernel_heap, size);
+}
+
+void *kzalloc(size_t size)
+{
+    void *ptr = kmalloc(size);
+
+    if(!ptr)
+        return NULL;
+
+    memset(ptr, 0, size);
+
+    return ptr;
 }
 
 void kfree(void *ptr)

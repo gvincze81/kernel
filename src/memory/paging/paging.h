@@ -11,10 +11,18 @@
 #define PAGING_IS_PRESENT       0b00000001
 
 #define PAGING_TOTAL_ENTRIES_PER_TABLE 1024
+#define PHYSICAL_PAGE_SIZE 4096
+
+typedef uint32_t PAGE_TRANSLATION_TABLE_ENTRY;
 
 struct paging_4gb_chunk
 {
-    uint32_t *directory_entry;
+    uint32_t *directory;
 };
+
+/*
+* Allocates and initializes a full paging structure
+*/
+struct paging_4gb_chunk *paging_new_4gb(uint8_t flags);
 
 #endif
