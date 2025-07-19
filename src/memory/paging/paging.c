@@ -1,9 +1,11 @@
 #include "paging.h"
 #include "memory/heap/kheap.h"
 
+static PAGE_TRANSLATION_TABLE_ENTRY *current_directory = NULL;
+
 struct paging_4gb_chunk *paging_new_4gb(uint8_t flags)
 {
-    uint32_t *directory_entry = kzalloc(PAGING_TOTAL_ENTRIES_PER_TABLE * sizeof(PAGE_TRANSLATION_TABLE_ENTRY));
+    PAGE_TRANSLATION_TABLE_ENTRY *directory_entry = kzalloc(PAGING_TOTAL_ENTRIES_PER_TABLE * sizeof(PAGE_TRANSLATION_TABLE_ENTRY));
 
     for(size_t i = 0; i < PAGING_TOTAL_ENTRIES_PER_TABLE; i++)
     {
@@ -22,4 +24,17 @@ struct paging_4gb_chunk *paging_new_4gb(uint8_t flags)
     chunk_4gb->directory = directory_entry;
 
     return chunk_4gb;
+}
+
+void paging_load_directory(PAGE_TRANSLATION_TABLE_ENTRY *directory);
+
+void paging_switch(PAGE_TRANSLATION_TABLE_ENTRY *directory)
+{
+    paging_load_directory(directory);
+    current_directory = directory;
+}
+
+PAGE_TRANSLATION_TABLE_ENTRY *paging_get_directory(struct paging_4gb_chunk *chunk)
+{
+    return chunk->directory;
 }

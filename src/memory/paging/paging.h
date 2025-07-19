@@ -17,12 +17,21 @@ typedef uint32_t PAGE_TRANSLATION_TABLE_ENTRY;
 
 struct paging_4gb_chunk
 {
-    uint32_t *directory;
+    PAGE_TRANSLATION_TABLE_ENTRY *directory;
 };
 
 /*
 * Allocates and initializes a full paging structure
 */
 struct paging_4gb_chunk *paging_new_4gb(uint8_t flags);
+
+/*
+* Enable paging mechanism
+*/
+void enable_paging();
+
+void paging_switch(PAGE_TRANSLATION_TABLE_ENTRY *directory);
+
+PAGE_TRANSLATION_TABLE_ENTRY *paging_get_directory(struct paging_4gb_chunk *chunk);
 
 #endif
